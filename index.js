@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
         if (rooms[roomName].player2 == '') {
             socket.join(roomName)
             rooms[roomName].player2 = player2
-            socket.to(roomName).emit('start')
+            socket.to(roomName).emit('start', rooms[roomName])
             cb([true, rooms[roomName]])
         } else {
             cb([false, 'The room is full'])
