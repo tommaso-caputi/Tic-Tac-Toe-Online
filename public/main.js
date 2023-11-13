@@ -60,8 +60,8 @@ socket.on("start", (room) => {
     player2 = room.player2
     updateUi()
     //show board
-    showBoard('||||||||||')
-    turn = 'Your turn'
+    turn = player1
+    showBoard('X||||||||', turn)
 })
 socket.on("user disconnected", () => {
     alert('opponent disconnected')
@@ -86,14 +86,18 @@ const updateUi = () => {
 
 
 //game functions
-const showBoard = (board) => {
+const showBoard = (board, turn) => {
+    document.getElementById("turn").innerHTML = "Turn: " + turn
     var boardHtml = document.getElementById('board')
     boardHtml.style.display = 'block'
     board = board.split('|')
+    const cells = document.querySelectorAll('.cell');
     console.log(board)
+    cells.forEach(cell => {
+        console.log(cell.dataset.index, board[cell.dataset.index])
+        cell.textContent = board[cell.dataset.index]
+    });
 }
-
-showBoard('|X|O||||O||||')
 
 //handle moves
 document.addEventListener('DOMContentLoaded', function () {

@@ -11,7 +11,7 @@
 
 <body>
 
-    <!-- <div id="playerNames" class="playerNames">
+    <div id="playerNames" class="playerNames">
         Room: <span id="roomName">-</span> | Player 1: <span id="player1Name">-</span> | Player 2: <span
             id="player2Name">-</span>
         <br>
@@ -32,9 +32,10 @@
         <button onclick="joinRoom()">Join Room</button>
         OR
         <button onclick="createRoom()">Create Room</button>
-    </div> -->
+    </div>
 
-    <div id="board" class="board">
+    <div id="board" style="display: none;">
+        <div id="turn">Turn: </div>
         <div id="ticTacToeBoard">
             <div class="cell" data-index="0"></div>
             <div class="cell" data-index="1"></div>

@@ -3,6 +3,7 @@ body {
     justify-content: center;
     align-items: center;
     font-family: "Audiowide", sans-serif;
+    flex-direction: column;
 }
 
 .login {
@@ -78,15 +79,6 @@ body {
 }
 
 /*--------------------------------------------------------*/
-
-/*Game board*/
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
 
 #ticTacToeBoard {
     display: grid;
