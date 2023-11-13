@@ -21,8 +21,8 @@ const createRoom = () => {
     let name = document.getElementById("name").value
     if (name != "") {
         let name = document.getElementById("name").value;
-        socket.emit("create room", name + "'s room", name);
-        room = name + "'s room"
+        room = socket.id
+        socket.emit("create room", room, name);
         player1 = name
         updateUi()
     } else {
@@ -37,8 +37,9 @@ const joinRoom = () => {
             name,
             (response) => {
                 if (response[0]) {
-                    console.log(response[1])
+                    player1 = response[1].player1
                     player2 = name
+                    room = document.getElementById("roomsList").value
                     updateUi()
                 } else {
                     alert(response[1])
@@ -49,11 +50,15 @@ const joinRoom = () => {
     }
 }
 socket.on("start", (room) => {
-    console.log('cascjacajcja')
+    console.log('start game')
     player2 = room.player2
     updateUi()
 })
-
+socket.on("prova", () => {
+    alert('disconnect casca')
+    document.getElementById("login").style.display = 'flex'
+    document.getElementById("playerNames").style.display = 'none'
+})
 
 
 const updateUi = () => {

@@ -19,7 +19,7 @@ rooms = {}
 const io = socket(server);
 
 io.on("connection", (socket) => {
-    console.log("Made socket connection", socket.id);
+    //console.log("Made socket connection", socket.id);
 
     socket.on("get rooms", (cb) => {
         cb(getAvailableRooms())
@@ -30,6 +30,7 @@ io.on("connection", (socket) => {
         socket.join(roomName)
     })
     socket.on("join room", (roomName, player2, cb) => {
+        console.log(roomName)
         if (rooms[roomName].player2 == '') {
             socket.join(roomName)
             rooms[roomName].player2 = player2
@@ -39,6 +40,11 @@ io.on("connection", (socket) => {
             cb([false, 'The room is full'])
         }
     })
+    socket.on('disconnect', () => {
+        console.log('User disconnected', socket.id);
+        socket.to(socket.id).emit('prova');
+        console.log(rooms)
+    });
 });
 
 
