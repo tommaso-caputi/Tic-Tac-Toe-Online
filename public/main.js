@@ -4,6 +4,8 @@ var player1 = ''
 var player2 = ''
 var room = ''
 
+var turn = ''
+
 //add to select the available rooms
 const getRooms = () => {
     socket.emit("get rooms", (response) => {
@@ -55,9 +57,11 @@ const joinRoom = () => {
 }
 socket.on("start", (room) => {
     alert('start')
-    console.log('start game')
     player2 = room.player2
     updateUi()
+    //show board
+    showBoard('||||||||||')
+    turn = 'Your turn'
 })
 socket.on("user disconnected", () => {
     alert('opponent disconnected')
@@ -78,3 +82,26 @@ const updateUi = () => {
     document.getElementById("roomName").innerHTML = room
     document.getElementById("playerNames").style.display = 'block'
 }
+
+
+
+//game functions
+const showBoard = (board) => {
+    var boardHtml = document.getElementById('board')
+    boardHtml.style.display = 'block'
+    board = board.split('|')
+    console.log(board)
+}
+
+showBoard('|X|O||||O||||')
+
+//handle moves
+document.addEventListener('DOMContentLoaded', function () {
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        cell.addEventListener('click', function () {
+            //cell.textContent =
+            console.log(cell.dataset.index)
+        });
+    });
+});
