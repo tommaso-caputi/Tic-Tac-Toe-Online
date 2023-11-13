@@ -13,21 +13,32 @@ const server = app.listen(PORT, function () {
 app.use(express.static("public"));
 
 //Utils
-rooms = { 'prova': { player1: '', player2: '' } }
+rooms = {}
+
 // Socket setup
 const io = socket(server);
 
 io.on("connection", (socket) => {
     console.log("Made socket connection", socket.id);
 
-    socket.on("get rooms", (callback) => {
-        callback(getAvailableRooms())
+    socket.on("get rooms", (cb) => {
+        cb(getAvailableRooms())
     })
 
     socket.on("create room", (roomName, player1) => {
         rooms[roomName] = { 'player1': player1, player2: '' }
+        socket.join(roomName)
     })
-
+    socket.on("join room", (roomName, player2, cb) => {
+        if (rooms[roomName].player2 == '') {
+            socket.join(roomName)
+            rooms[roomName].player2 = player2
+            socket.to(roomName).emit('start')
+            cb([true, rooms[roomName]])
+        } else {
+            cb([false, 'The room is full'])
+        }
+    })
 });
 
 

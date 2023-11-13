@@ -9,3 +9,9 @@ body {
     flex-direction: column;
     text-align: center;
 }
+
+.playerNames {
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+}
