@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic Tac Toe Multiplayer</title>
     <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
 </head>
 
 <body>
@@ -13,6 +14,15 @@
     <div id="playerNames" class="playerNames">
         Room: <span id="roomName">-</span> | Player 1: <span id="player1Name">-</span> | Player 2: <span
             id="player2Name">-</span>
+        <br>
+        <div id="loading" class="loading">
+            <h3>Waiting for opponent</h3>
+            <br>
+            <div class="lds-ripple">
+                <div></div>
+                <div></div>
+            </div>
+        </div>
     </div>
 
     <div id="login" class="login">

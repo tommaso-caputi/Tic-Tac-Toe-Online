@@ -26,12 +26,13 @@ io.on("connection", (socket) => {
     })
 
     socket.on("create room", (roomName, player1) => {
+        console.log(socket.id + "(" + player1 + ") created:  " + roomName)
         rooms[roomName] = { 'player1': player1, player2: '' }
         socket.join(roomName)
     })
     socket.on("join room", (roomName, player2, cb) => {
-        console.log(roomName)
         if (rooms[roomName].player2 == '') {
+            console.log(socket.id + "(" + player2 + ") joined:  " + roomName)
             socket.join(roomName)
             rooms[roomName].player2 = player2
             socket.to(roomName).emit('start', rooms[roomName])
@@ -40,10 +41,10 @@ io.on("connection", (socket) => {
             cb([false, 'The room is full'])
         }
     })
-    socket.on('disconnect', () => {
-        console.log('User disconnected', socket.id);
-        socket.to(socket.id).emit('prova');
-        console.log(rooms)
+    socket.on('disconnecting', () => {
+        let temp = socket.rooms.values()
+        temp.next().value
+        socket.to(temp.next().value).emit("user disconnected")
     });
 });
 
