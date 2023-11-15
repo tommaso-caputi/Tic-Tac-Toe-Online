@@ -41,6 +41,9 @@ io.on("connection", (socket) => {
             cb([false, 'The room is full'])
         }
     })
+    socket.on('move', (board, turn, sign, room) => {
+        socket.to(room).emit('new move', board, turn, sign, room)
+    })
     socket.on('disconnecting', () => {
         let temp = socket.rooms.values()
         temp.next().value
