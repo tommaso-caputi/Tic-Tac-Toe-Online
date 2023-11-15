@@ -1,10 +1,10 @@
 const socket = io();
 
-var player1 = ''
-var player2 = ''
+var player1 = ['', '']
+var player2 = ['', '']
 var room = ''
 
-var turn = ''
+var turn = ['', '']
 var board = ['', '', '', '', '', '', '', '', '']
 var sign = 'X'
 
@@ -27,7 +27,8 @@ const createRoom = () => {
         let name = document.getElementById("name").value;
         room = name + "'s room"
         socket.emit("create room", room, [name, socket.id]);
-        player1 = name
+        player1 = [name, socket.id]
+        player2 = ['', '']
         updateUi()
     } else {
         alert("Insert name")
@@ -63,7 +64,8 @@ socket.on("user disconnected", () => {
 //-------------------------------------------------------------
 
 const updateUi = () => {
-    if (player2 == "") {
+    console.log(player1, player2, room, turn, board)
+    if (player1[0] != "" && player2[0] == "") {
         document.getElementById("loading").style.display = 'block'
     } else {
         document.getElementById("loading").style.display = 'none'
@@ -76,6 +78,13 @@ const updateUi = () => {
     document.getElementById("player2Name").innerHTML = player2[0]
     document.getElementById("roomName").innerHTML = room
     document.getElementById("playerNames").style.display = 'block'
+    if (player1[0] == "" && player2[0] == "") {
+        document.getElementById("login").style.display = 'flex'
+        document.getElementById("board").style.display = 'none'
+        document.getElementById("turn").style.display = 'none'
+        document.getElementById("playerNames").style.display = 'none'
+        location.reload()
+    }
 }
 
 // function for handle game
@@ -93,13 +102,31 @@ const startGame = () => {
 
 socket.on('new move', (newBoard, newTurn, newSign) => {
     updateGame(newBoard, newTurn, newSign)
+    const end = checkWinner()
+    if (end) {
+        var res = ''
+        if (end == 'T') {
+            res = 'Tie'
+        } else if (end == 'X') {
+            res = player1[0] + ' wins'
+        } else {
+            res = player2[0] + ' wins'
+        }
+        alert(res)
+        player1 = ['', '']
+        player2 = ['', '']
+        room = ''
+        turn = ['', '']
+        board = ['', '', '', '', '', '', '', '', '']
+        sign = 'X'
+        updateUi()
+    }
 })
 
 const updateGame = (newBoard, newTurn, newSign) => {
     board = newBoard
     turn = newTurn
     sign = newSign
-    console.log(board)
     updateUi()
     updateBoard()
 }
@@ -108,7 +135,6 @@ const updateBoard = () => {
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
         cell.textContent = board[cell.dataset.index]
-        //console.log(cell.dataset.index, board[cell.dataset.index])
     });
 }
 
@@ -117,24 +143,71 @@ document.addEventListener('DOMContentLoaded', function () {
     cells.forEach(cell => {
         cell.addEventListener('click', function () {
             if (turn[1] == socket.id) {
-                if (socket.id == player1[1]) {
-                    newTurn = player2
+                if (checkMove(cell.dataset.index)) {
+                    if (socket.id == player1[1]) {
+                        newTurn = player2
+                    } else {
+                        newTurn = player1
+                    }
+                    if (sign == 'X') {
+                        newSign = 'O'
+                    } else {
+                        newSign = 'X'
+                    }
+                    board[cell.dataset.index] = sign
+                    newBoard = board
+                    updateGame(newBoard, newTurn, newSign)
+                    socket.emit('new move', newBoard, newTurn, newSign, room)
+                    const end = checkWinner()
+                    if (end) {
+                        var res = ''
+                        if (end == 'T') {
+                            res = 'Tie'
+                        } else if (end == 'X') {
+                            res = player1[0] + ' wins'
+                        } else {
+                            res = player2[0] + ' wins'
+                        }
+                        alert(res)
+                        player1 = ['', '']
+                        player2 = ['', '']
+                        room = ''
+                        turn = ['', '']
+                        board = ['', '', '', '', '', '', '', '', '']
+                        sign = 'X'
+                        updateUi()
+                    }
                 } else {
-                    newTurn = player1
+                    alert('This move is not valid')
                 }
-                if (sign == 'X') {
-                    newSign = 'O'
-                } else {
-                    newSign = 'X'
-                }
-                board[cell.dataset.index] = sign
-                newBoard = board
-                updateGame(newBoard, newTurn, newSign)
-                socket.emit('new move', newBoard, newTurn, newSign, room)
             } else {
                 alert('Is not your turn')
             }
         });
     });
 });
+
+const checkMove = (index) => {
+    if (board[index] == '') {
+        return true
+    } else {
+        return false
+    }
+}
+const checkWinner = () => {
+    for (const combination of [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+        [0, 4, 8], [2, 4, 6]             // diagonals
+    ]) {
+        const [a, b, c] = combination;
+        if (board[a] !== '' && board[a] === board[b] && board[a] === board[c]) {
+            return board[a]; // winner
+        }
+    }
+    if (!board.includes('')) {
+        return 'T'; // tie
+    }
+    return null;
+};
 //------------------------------------------------
