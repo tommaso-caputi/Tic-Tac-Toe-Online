@@ -19,12 +19,11 @@ rooms = {}
 const io = socket(server);
 
 io.on("connection", (socket) => {
-    //console.log("Made socket connection", socket.id);
 
+    // functions for handle rooms
     socket.on("get rooms", (cb) => {
         cb(getAvailableRooms())
     })
-
     socket.on("create room", (roomName, player1) => {
         console.log(socket.id + "(" + player1 + ") created:  " + roomName)
         rooms[roomName] = { 'player1': player1, player2: '' }
@@ -41,14 +40,12 @@ io.on("connection", (socket) => {
             cb([false, 'The room is full'])
         }
     })
-    socket.on('move', (board, turn, sign, room) => {
-        socket.to(room).emit('new move', board, turn, sign, room)
-    })
     socket.on('disconnecting', () => {
         let temp = socket.rooms.values()
         temp.next().value
         socket.to(temp.next().value).emit("user disconnected")
     });
+    //----------------------------------------------------------------
 });
 
 
